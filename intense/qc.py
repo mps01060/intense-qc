@@ -7,7 +7,7 @@ import rpy2.robjects as robjects
 from rpy2.robjects.packages import importr
 import scipy.interpolate
 import scipy.stats
-from rpy2.rinterface import RRuntimeError
+from rpy2.rinterface_lib.embedded import RRuntimeError
 from typing import Optional, Iterable, Tuple, List, Union, IO
 from scipy.spatial import KDTree
 
