@@ -933,7 +933,7 @@ class Qc:
         df = self.gauge.data.to_frame("target")
 
         # convert hourly to daily 7am-7am
-        daily_values = df.target.resample('24H', base=7, closed='right').sum(min_count=24).round(1)
+        daily_values = df.target.resample('24h', offset='7h', closed='right').sum(min_count=24).round(1)
         daily_values.index = daily_values.index.date
 
         neighbours, paths = self.find_neighbours('hourly')
@@ -986,7 +986,7 @@ class Qc:
         df = self.gauge.data.to_frame("target")
 
         # convert hourly to daily 7am-7am
-        daily_values = df.target.resample('24H', base=7, closed='right').sum(min_count=24).round(1)
+        daily_values = df.target.resample('24h', offset='7h', closed='right').sum(min_count=24).round(1)
         daily_values.index = daily_values.index.date
 
         # offset by one day in either direction to help identify optimum offset
