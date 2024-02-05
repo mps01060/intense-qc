@@ -150,7 +150,7 @@ class Gauge:
 
     def monthly_max(self) -> pd.Series:
         """Returns the monthly maximum value from masked"""
-        return self.masked.groupby(pd.TimeGrouper('M')).max()
+        return self.masked.groupby(pd.TimeGrouper('ME')).max()
 
 
 def read_intense(path_or_stream: Union[str, IO], only_metadata: bool = False) -> Gauge:
@@ -213,14 +213,14 @@ def read_intense(path_or_stream: Union[str, IO], only_metadata: bool = False) ->
             data = pd.Series(data,
                              pd.date_range(start=datetime.strptime(metadata['start datetime'], '%Y%m%d%H'),
                                            end=datetime.strptime(metadata['end datetime'], '%Y%m%d%H'),
-                                           freq=metadata['new timestep'][:-2] + 'H'),
+                                           freq=metadata['new timestep'][:-2] + 'h'),
                              dtype=float)
         except:  # Modification adds extra hour at end of series to accomodate nan value
             # Drop nan alternative: (keeps all series same length)
             data = pd.Series(data[:-1],
                              pd.date_range(start=datetime.strptime(metadata['start datetime'], '%Y%m%d%H'),
                                            end=datetime.strptime(metadata['end datetime'], '%Y%m%d%H'),
-                                           freq=metadata['new timestep'][:-2] + 'H'),
+                                           freq=metadata['new timestep'][:-2] + 'h'),
                              dtype=float)
 
     gauge = Gauge(station_id=metadata['station id'],

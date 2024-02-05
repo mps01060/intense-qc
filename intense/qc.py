@@ -238,8 +238,8 @@ class Qc:
         Returns:
             Years where 95th and 99th percentiles are zero
         """
-        perc95 = self.gauge.data.groupby(pd.Grouper(freq='A')).quantile(.95)
-        perc99 = self.gauge.data.groupby(pd.Grouper(freq='A')).quantile(.99)
+        perc95 = self.gauge.data.groupby(pd.Grouper(freq='YE')).quantile(.95)
+        perc99 = self.gauge.data.groupby(pd.Grouper(freq='YE')).quantile(.99)
 
         return [d.year for d in list(perc95[perc95 == 0].index)], [d.year for d in list(perc99[perc99 == 0].index)]
 
@@ -249,9 +249,9 @@ class Qc:
         Returns:
             The first, five and ten largest rainfall values
         """
-        k1 = self.gauge.data.groupby(pd.Grouper(freq='A')).nlargest(n=1).min(level=0)
-        k5 = self.gauge.data.groupby(pd.Grouper(freq='A')).nlargest(n=5).min(level=0)
-        k10 = self.gauge.data.groupby(pd.Grouper(freq='A')).nlargest(n=10).min(level=0)
+        k1 = self.gauge.data.groupby(pd.Grouper(freq='YE')).nlargest(n=1).min(level=0)
+        k5 = self.gauge.data.groupby(pd.Grouper(freq='YE')).nlargest(n=5).min(level=0)
+        k10 = self.gauge.data.groupby(pd.Grouper(freq='YE')).nlargest(n=10).min(level=0)
 
         return [d.year for d in list(k1[k1 == 0].index)], \
                [d.year for d in list(k5[k5 == 0].index)], \
@@ -468,7 +468,7 @@ class Qc:
                 "D").sum()  # this changes depending on which version of pandas youre using. o.14 requires how agument,
             # later requires .sum
 
-            perc99 = daily_ts.groupby(pd.Grouper(freq='A')).quantile(.99)
+            perc99 = daily_ts.groupby(pd.Grouper(freq='YE')).quantile(.99)
             py = list(perc99.index.year)
             pv = list(perc99)
             p_dict = {}
@@ -478,7 +478,7 @@ class Qc:
             daily_df["year"] = daily_df.index.year
             daily_df["p99"] = daily_df.apply(lambda row: p_dict[row.year], axis=1)
             daily_df["filtered"] = daily_df.daily.where(daily_df.daily >= daily_df.p99)
-            perc99_tot = daily_df.groupby(pd.Grouper(freq='A')).sum()
+            perc99_tot = daily_df.groupby(pd.Grouper(freq='YE')).sum()
             tots = list(perc99_tot.filtered)
             checks = [utils.day_check(t, p_max, p_max_filled) for t in tots]
 
@@ -497,7 +497,7 @@ class Qc:
         p_max, p_max_filled = utils.get_etccdi_value(self.etcdii_data, 'PRCPTOT', self.gauge.longitude, self.gauge.latitude)
 
         if np.isfinite(p_max) or np.isfinite(p_max_filled):
-            ann_tots = self.gauge.data.groupby(pd.Grouper(freq='A')).sum()
+            ann_tots = self.gauge.data.groupby(pd.Grouper(freq='YE')).sum()
             tots = list(ann_tots)
             checks = [utils.day_check(t, p_max, p_max_filled) for t in tots]
         else:
@@ -1362,7 +1362,7 @@ def read_intense_qc(path_or_stream: Union[IO, str], only_metadata: bool = False)
         data = np.array(data)
         data = pd.DataFrame(data, pd.date_range(start=datetime.strptime(metadata['start datetime'], '%Y%m%d%H'),
                                                 end=datetime.strptime(metadata['end datetime'], '%Y%m%d%H'),
-                                                freq=metadata['new timestep'][:-2] + 'H'), dtype=float,
+                                                freq=metadata['new timestep'][:-2] + 'h'), dtype=float,
                             columns=["vals", "hourly_neighbours", "hourly_neighbours_dry", "daily_neighbours",
                                      "daily_neighbours_dry", "monthly_neighbours", "world_record", "Rx1day",
                                      "CWD", "CDD", "daily_accumualtions", "monthly_accumulations",
