@@ -249,9 +249,9 @@ class Qc:
         Returns:
             The first, five and ten largest rainfall values
         """
-        k1 = self.gauge.data.groupby(pd.Grouper(freq='YE')).nlargest(n=1).min(level=0)
-        k5 = self.gauge.data.groupby(pd.Grouper(freq='YE')).nlargest(n=5).min(level=0)
-        k10 = self.gauge.data.groupby(pd.Grouper(freq='YE')).nlargest(n=10).min(level=0)
+        k1 = self.gauge.data.groupby(pd.Grouper(freq='YE')).apply(lambda x: x.nlargest(1).min())
+        k5 = self.gauge.data.groupby(pd.Grouper(freq='YE')).apply(lambda x: x.nlargest(5).min())
+        k10 = self.gauge.data.groupby(pd.Grouper(freq='YE')).apply(lambda x: x.nlargest(10).min())
 
         return [d.year for d in list(k1[k1 == 0].index)], \
                [d.year for d in list(k5[k5 == 0].index)], \
@@ -264,7 +264,7 @@ class Qc:
             1 if p < 0.01 or 0 if p >= 0.01 of T-test
         """
         # 0 is monday, 1 is tuesday etc...
-        days = self.gauge.data.groupby(lambda x: x.weekday).mean()
+        days = self.gauge.data.groupby(self.gauge.data.index.dayofweek).mean()
         popmean = self.gauge.data.mean()
         p = scipy.stats.ttest_1samp(days, popmean)[1]
         if p < 0.01:  # different
