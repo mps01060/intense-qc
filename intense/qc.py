@@ -1069,7 +1069,7 @@ class Qc:
 
         # convert hourly to daily 7am-7am
         # groups including missing data are dropped by using np.array.sum
-        dfm = df.resample("M", label='right', closed='right').apply(lambda x: x.values.sum())
+        dfm = df.resample("ME", label='right', closed='right').apply(lambda x: x.values.sum())
         # find neighbours
         neighbours = self.find_neighbours('monthly')
 
