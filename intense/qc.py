@@ -968,7 +968,7 @@ class Qc:
             
             # Ensure that the day before the beginning of the hourly time 
             # series is not incorporated as a result of the concat operation
-            df = df.loc[self.gauge.start_datetime:self.gauge.end_datetime].fillna(method="ffill", limit=23).fillna(-999)
+            df = df.loc[self.gauge.start_datetime:self.gauge.end_datetime].ffill(limit=23).fillna(-999)
 
             return list(df['flags'].astype(int)), list(df.dry_flags.astype(int))
 
@@ -1044,7 +1044,7 @@ class Qc:
             
             # Ensure that the day before the beginning of the hourly time 
             # series is not incorporated as a result of the concat operation
-            df = df.loc[self.gauge.start_datetime:self.gauge.end_datetime].fillna(method="ffill", limit=23).fillna(-999)
+            df = df.loc[self.gauge.start_datetime:self.gauge.end_datetime].ffill(limit=23).fillna(-999)
 
             return \
                 list(df['flags'].astype(int)), \
