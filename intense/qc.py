@@ -335,7 +335,7 @@ class Qc:
 
                 # Otherwise check if preceding/following values are dry
                 else:
-                    if (df['prev'][si] == 0) and (df['next'][ei] == 0):
+                    if (df['prev'].iloc[si] == 0) and (df['next'].iloc[ei] == 0):
                         start_inds2.append(si)
                         end_inds2.append(ei)
 
