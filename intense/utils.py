@@ -914,7 +914,7 @@ def propagate_flags(series, days=14):
     series = series.copy()
     # flag preceding periods, prioritising higher flag values
     for flag, series_filtered in [(flag, series[series == flag]) for flag in [1, 2, 3]]:
-        for idx, value in series_filtered.iteritems():
+        for idx, value in series_filtered.items():
             series[idx - datetime.timedelta(days=days):idx] = flag
 
     return series
