@@ -813,7 +813,7 @@ class Qc:
             flag = 2
         df1['flag'] = flag
         df2['flag'] = 3
-        df3 = df1.append(df2)
+        df3 = pd.concat([df1, df2], ignore_index=False)
 
         # Make list of flags
         flags = [0 for i in range(len(df['val']))]
