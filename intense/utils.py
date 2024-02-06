@@ -49,19 +49,25 @@ def world_record_check(val):
 
  # ETCCDI utility function 1
 def prep_etccdi_variable(input_path, index_name, aggregation, data_source):
-    ds = xr.open_dataset(input_path)
+    # xarray/numpy has inconsistent overflow warnings when auto-decoding
+    # data arrays with units like "days" that are encoded as float32 to timedelta64.
+    # Read the data in without decoding to a timedelta for more conistent behavior.
+    ds = xr.open_dataset(input_path, decode_timedelta=False)
+    if index_name in ['CWD', 'CDD']:
+        if ds[index_name].attrs["units"] != "days":
+            raise NotImplementedError(f"{index_name} only works with units 'days', not {ds[index_name].attrs['units']}")
 
     # Omit final year (2010) of HADEX2 - suspiciously large CDD for Malaysia
     if data_source == 'HADEX2':
         ds = ds.sel(time=slice(datetime.datetime(1951, 1, 1, 0),
                                datetime.datetime(2009, 12, 31, 23)))
 
-    # Calculate maximum rainfall value over whole period
-    vals = ds[index_name].values
+    # Calculate maximum value over whole period
+    vals = ds[index_name].values.astype('float32')
+
     if index_name in ['CWD', 'CDD']:
-        vals = ds[index_name].values.astype('timedelta64[s]')
-        vals = vals.astype('float32') / 86400.0
-        vals[vals < 0.0] = np.nan
+        if np.any(vals < 0):
+            raise ValueError(f"{index_name} cannot have negative values.")
     vals = ma.masked_invalid(vals)
     if aggregation == 'max':
         data = ma.max(vals, axis=0)
