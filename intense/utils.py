@@ -757,7 +757,7 @@ def check_neighbours(target, neighbours, station=None,
     df["flags"] = np.select(conditions, choices, default=0)
 
     df.loc[df.online < 3, "flags"] = np.nan
-    dfr = df.flags
+    dfr = df['flags']
 
     dfr.index = pd.to_datetime(dfr.index) + datetime.timedelta(hours=8)
 
@@ -802,13 +802,13 @@ def check_neighbours_dry(target, neighbours):  # Liz check this
     # not totally dry (i.e. df.target < 1) on the basis that this is now handled in
     # the revised dry neighbours check (so just commented out line below)
 
-    df.flags = df.flags.replace([np.inf, -np.inf], -999)
+    df['flags'] = df['flags'].replace([np.inf, -np.inf], -999)
     df.loc[df.online < 3, "flags"] = -999
-    df.flags = df.flags.astype(int)
-    df.flags = df.flags.replace(-999, np.nan)
+    df['flags'] = df['flags'].astype(int)
+    df['flags'] = df['flags'].replace(-999, np.nan)
     # needs to be at hour=0800 to reconcile GPCC vs GSDR aggregation definitions
     df.index = pd.to_datetime(df.index) + datetime.timedelta(hours=8)
-    return propagate_flags(df.flags)
+    return propagate_flags(df['flags'])
 
 
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -889,7 +889,7 @@ def check_m_neighbours(target, neighbours):
     # If less than 3 stations online than flag check as incomplete unless flag
     # has a value of -5/5 (i.e. outside climatology range)
     df2.loc[(df2.online < 3) & (np.absolute(df2['flags']) != 5), "flags"] = np.nan
-    dfr = df2.flags
+    dfr = df2['flags']
 
     return [dfr, df_factor]
 
